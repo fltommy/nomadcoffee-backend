@@ -1,16 +1,32 @@
-
-require("dotenv").config();
-import { ApolloServer } from "apollo-server";
-import schema from "./schema";
-
-const server = new ApolloServer({
-  schema,
-});
+import "dotenv/config";
+import express from "express";
+import { ApolloServer } from "apollo-server-express";
+import { graphqlUploadExpress } from "graphql-upload";
+import { typeDefs, resolvers } from "./schema";
+import { getUser } from "./users/users.utils";
 
 const PORT = process.env.PORT;
 
-server
-  .listen(PORT)
-  .then(() =>
-    console.log(`🚀Server is running on http://localhost:${PORT} ✅`)
-  );
+const apolloServer = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: async ({ req }) => {
+    const token = req.headers.token;
+    return {
+      loggedInUser: await getUser(token),
+    };
+  },
+});
+
+apolloServer.start().then(() => {
+  const app = express();
+
+  app.use("/static", express.static("uploads"));
+  app.use(graphqlUploadExpress());
+
+  apolloServer.applyMiddleware({ app });
+
+  app.listen({ port: PORT });
+
+  console.log(`✅ Server is running on http://localhost:${PORT}/graphql`);
+});

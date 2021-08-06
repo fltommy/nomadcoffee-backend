@@ -3,10 +3,17 @@
 NomadCoffee Backend.
 ## User:
 
-- [ ] Create Account
-- [ ] See Profile
-- [ ] Login
-- [ ] Edit Profile
+- [x] Create Account
+- [x] See Profile
+- [x] Login
+- [x] Edit Profile
+- [x] Change Avatar (Image Upload)
+### I copied from someone's nice code. ^^ Thanks ! 
+
+
+
 - [ ] Follow User
 - [ ] Unfollow User
-- [ ] Change Avatar (Image Upload)
+- [ ] Search Users
+- [ ] See Followers
+- [ ] See Following
