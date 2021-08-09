@@ -1,3 +1,7 @@
+# I copied from someone's nice code. I'm keep follow to coding skill ^^ Thanks ! 
+
+---
+
 # NomadCoffee
 
 NomadCoffee Backend.
@@ -8,12 +12,8 @@ NomadCoffee Backend.
 - [x] Login
 - [x] Edit Profile
 - [x] Change Avatar (Image Upload)
-### I copied from someone's nice code. ^^ Thanks ! 
-
-
-
-- [ ] Follow User
-- [ ] Unfollow User
-- [ ] Search Users
-- [ ] See Followers
-- [ ] See Following
+- [x] Follow User
+- [x] Unfollow User
+- [x] See Followers
+- [x] See Following
+- [x] Search Users
