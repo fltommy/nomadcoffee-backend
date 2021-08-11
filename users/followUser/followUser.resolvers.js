@@ -1,9 +1,9 @@
 import client from "../../client";
-import { protectResolver } from "../users.utils";
+import { protectedResolver } from "../users.utils";
 
 export default {
   Mutation: {
-    followUser: protectResolver(async (_, { username }, { loggedInUser }) => {
+    followUser: protectedResolver(async (_, { username }, { loggedInUser }) => {
       try {
         const exist = await client.user.findUnique({ where: { username } });
         if (!exist) {

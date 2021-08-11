@@ -17,3 +17,13 @@ NomadCoffee Backend.
 - [x] See Followers
 - [x] See Following
 - [x] Search Users
+
+## coffeeShops
+
+- [ ] Create, Edit, See
+
+## Comments
+
+- [ ] Comment on Photo
+- [ ] Edit Comment
+- [ ] Delete Comment
