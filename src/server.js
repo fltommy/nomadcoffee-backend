@@ -12,7 +12,6 @@ const {
   ApolloServerPluginLandingPageLocalDefault,
 } = require('apollo-server-core');
 
-
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
@@ -20,7 +19,7 @@ const apolloServer = new ApolloServer({
   introspection: true,
   plugins: [
     process.env.NODE_ENV === 'production' ?
-      ApolloServerPluginLandingPageProductionDefault({ footer: false }) :
+      ApolloServerPluginLandingPageProductionDefault({ footer: true }) :
       ApolloServerPluginLandingPageLocalDefault({ footer: true })
   ],
   context: async ({ req }) => {
