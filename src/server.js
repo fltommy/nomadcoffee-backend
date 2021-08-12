@@ -7,11 +7,22 @@ import { getUser } from "./users/users.utils";
 
 const PORT = process.env.PORT;
 
+const {
+  ApolloServerPluginLandingPageProductionDefault,
+  ApolloServerPluginLandingPageLocalDefault,
+} = require('apollo-server-core');
+
+
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
   playground: true,
   introspection: true,
+  plugins: [
+    process.env.NODE_ENV === 'production' ?
+      ApolloServerPluginLandingPageProductionDefault({ footer: false }) :
+      ApolloServerPluginLandingPageLocalDefault({ footer: true })
+  ],
   context: async ({ req }) => {
     const token = req.headers.token;
     return {
