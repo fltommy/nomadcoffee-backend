@@ -10,7 +10,7 @@ const PORT = process.env.PORT;
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
-  introspection = true,
+  introspection: true,
   context: async ({ req }) => {
     const token = req.headers.token;
     return {
