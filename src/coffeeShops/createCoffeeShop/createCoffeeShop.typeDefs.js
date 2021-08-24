@@ -8,8 +8,8 @@ export default gql`
             longitude:  String
             url: Upload
             categoryName: String!
-            slug: String!
-        ): CoffeeShop
+            categorySlug: String!
+        ): MutationResult!
     }
     
 `;

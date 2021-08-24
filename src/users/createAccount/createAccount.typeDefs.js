@@ -9,6 +9,6 @@ export default gql`
       location: String
       avatar: Upload
       password: String!
-    ): MutationOutput!
+    ): MutationResult!
   }
 `;

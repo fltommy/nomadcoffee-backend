@@ -125,3 +125,5 @@ uploads
 
 #
 /build
+src.*
+.gitignore

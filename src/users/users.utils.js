@@ -2,21 +2,28 @@ import jwt from "jsonwebtoken";
 import client from "../client";
 
 export const getUser = async (token) => {
-  if (!token) {
-    return null;
-  }
-  const verifiedToken = await jwt.verify(token, process.env.PRIVATE_KEY);
-  if (verifiedToken.id) {
+  // console.log(token);
+  try {
+    if (!token) {
+      return null;
+    }
+    const { id } = await jwt.verify(token, process.env.PRIVATE_KEY);
+    // console.log(id);
     const user = await client.user.findUnique({
-      where: { id: verifiedToken.id },
+      where: {
+        id,
+      },
     });
     if (user) {
       return user;
+    } else {
+      return null;
     }
+  } catch {
     return null;
   }
-  return null;
 };
+
 
 export const protectedResolver = (resolver) => (parent, args, context, info) => {
   if (!context.loggedInUser) {

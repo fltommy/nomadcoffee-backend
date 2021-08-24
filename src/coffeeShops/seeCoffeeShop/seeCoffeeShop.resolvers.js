@@ -2,11 +2,14 @@ import client from "../../client";
 
 export default {
     Query: {
-        seeCoffeeShop: async(_,{id}) => 
-            await client.coffeeShop.findUnique({
-                where: {
-                    id
-                }
-            })
-    }
+        seeCoffeeShop: (_, { id }) =>
+            client.coffeeShop.findUnique({
+                where: { id },
+                include: {
+                    user: true,
+                    photos: true,
+                    categories: true
+                },
+            }),
+    },
 };

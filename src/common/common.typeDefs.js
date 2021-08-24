@@ -1,7 +1,7 @@
 import { gql } from "apollo-server";
 
 export default gql`
-  type MutationOutput {
+  type MutationResult {
     ok: Boolean!
     error: String
   }

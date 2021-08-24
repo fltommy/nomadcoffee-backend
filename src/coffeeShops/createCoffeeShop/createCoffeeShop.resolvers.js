@@ -1,18 +1,47 @@
 import client from "../../client";
 import { createWriteStream } from "fs";
 import { protectedResolver } from "../../users/users.utils";
+import { randomInt } from "crypto";
 
 export default {
     Mutation: {
-        createCoffeeShop: protectedResolver(async (_, { name, latitude, longitude, url, categoryName, slug }, { loggedInUser }) => {
+        createCoffeeShop: protectedResolver(async (_,
+            { name, latitude, longitude, url, categoryName, categorySlug },
+            { loggedInUser }) => {
             try {
 
-                // todo : exist check by name
+                const existCheck = await client.coffeeShop.findFirst({
+                    where: { name },
+                    select: { name: true },
+                });
+                if (existCheck) {
+                    return {
+                        ok: false,
+                        error: "That name has taken!",
+                    };
+                }
+
+                // todo : if categogy slug exist, maybe slug auto generate to unique
+                const categorySlugExistCheck = await client.category.findFirst({
+                    where: { slug: categorySlug },
+                    select: { slug: true },
+                });
+                if (categorySlugExistCheck) {
+                    // return {
+                    //     ok: false,
+                    //     error: "That Category name duplication OK. but, slug need unique!",
+                    // };
+
+                    // connectOrCreate Rule where name is,
+                    // if name is exist, then just connect.
+                    // if name is new but same slug, then create new name and new random slug.
+                    categorySlug = categorySlug + "-" + randomInt(9999);
+                }
 
 
                 let categoryObj = {
                     where: { name: categoryName },
-                    create: { name: categoryName, slug },
+                    create: { name: categoryName, slug: categorySlug },
                 };
 
                 let newUrl = null;
@@ -31,8 +60,6 @@ export default {
                     };
                 }
 
-
-
                 let shop = await client.coffeeShop.create({
                     data: {
                         name,
@@ -43,9 +70,6 @@ export default {
                                 id: loggedInUser.id
                             }
                         },
-                        // photos: {
-                        //     connectOrCreate: photoObj
-                        // },
                         ...(photoObj && {
                             photos: {
                                 connectOrCreate: photoObj
@@ -56,10 +80,17 @@ export default {
                         }
                     }
                 });
-                return shop;
+                return {
+                    ok: true,
+                };
             } catch (error) {
                 console.log(error);
+                return {
+                    ok: false,
+                    error,
+                };
             }
+
         })
     }
 };

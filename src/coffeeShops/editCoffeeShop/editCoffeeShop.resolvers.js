@@ -5,69 +5,65 @@ import { protectedResolver } from "../../users/users.utils";
 
 export default {
     Mutation: {
-        editCoffeeShop: protectedResolver(async(_,{
-            shopName,
-            newShopName,
-            latitude,
-            longitude,
-            url,
-            },{loggedInUser}) => {
-                let newUrl = null;
-                let photoObj = null;
-
-                const shopOwnerId = await client.coffeeShop.findUnique({
-                    where:{
-                        name: shopName
+        editCoffeeShop: protectedResolver(
+            async (
+                _,
+                { id, name, latitude, longitude, categoryName, categorySlug },
+                { loggedInUser }
+            ) => {
+                const oldShop = await client.coffeeShop.findFirst({
+                    where: {
+                        id,
+                        userId: loggedInUser.id,
                     },
-                    select:{
-                        UserId: true
-                    }
+                    include: {
+                        categories: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
                 });
-
-                if (shopOwnerId.UserId !== loggedInUser.id) {
+                if (!oldShop) {
                     return {
                         ok: false,
-                        error: "Not Authorized"
-                    }
-                }
-
-                if (url) {
-                    const { filename, createReadStream } = await url;
-                    const newFilename = `${loggedInUser.id}-${Date.now()}-${filename}`;
-                    const readStream = createReadStream();
-                    const writeStream = createWriteStream(process.cwd() + "/uploads/" + newFilename);
-                    readStream.pipe(writeStream);
-                    newUrl = `http://localhost:4000/static/${newFilename}`;
-                    photoObj = {
-                        where: { url: newUrl },
-                        create: { url: newUrl },
+                        error: "You can not edit this shop",
                     };
                 }
-
-                const updateShop = await client.coffeeShop.update({
-                    where:{
-                        name: shopName
-                    },
-                    data:{
-                        ...(newShopName && {name: newShopName}),
-                        ...(latitude && {latitude}),
-                        ...(longitude && {longitude}),
-                        ...(url && {photos: {
-                            connectOrCreate: photoObj
-                        }})
-                    }
+                const exist = await client.coffeeShop.findFirst({
+                    where: { name },
+                    select: { name: true },
                 });
-
-                if (updateShop.id){
-                    return {
-                        ok: true,
-                    };
-                } else {
+                if (exist) {
                     return {
                         ok: false,
-                        error: "could not update coffeeShop",
+                        error: "That name has taken Try other name",
                     };
                 }
-        })
-    }
+
+                let categoryObj = {
+                    where: { name: categoryName },
+                    create: { name: categoryName, slug: categorySlug },
+                };
+
+                await client.coffeeShop.update({
+                    where: {
+                        id,
+                    },
+                    data: {
+                        name,
+                        latitude,
+                        longitude,
+                        categories: {
+                            disconnect: oldShop.categories,
+                            connectOrCreate: categoryObj
+                        },
+                    },
+                });
+                return {
+                    ok: true,
+                };
+            }
+        ),
+    },
 };
